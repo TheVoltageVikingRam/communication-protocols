@@ -1,4 +1,4 @@
-<pre>module uarttx #(
+module uarttx #(
 parameter clk_freq = 1000000,
 parameter baud_rate = 9600
 )
@@ -17,10 +17,10 @@ integer counts = 0;
 
 reg uclk = 0;
 typedef enum bit[1:0] {
-idle = 2&apos;b00, 
-start = 2&apos;b01, 
-transfer = 2&apos;b10, 
-done = 2&apos;b11} state_t;
+idle = 2'b00, 
+start = 2'b01, 
+transfer = 2'b10, 
+done = 2'b11} state_t;
 
 state_t state;
 
@@ -29,17 +29,17 @@ state_t state;
 
 always @(posedge clk) begin 
 if(rst) begin
-	count &lt;= 0;
-	uclk &lt;= 0;
+	count <= 0;
+	uclk <= 0;
 end
 
 else begin
 
-	if (count &lt; clkcount/2 - 1)
-		count &lt;= count + 1;
+	if (count < clkcount/2 - 1)
+		count <= count + 1;
 	else begin 
-		count &lt;= 0;
-		uclk &lt;= ~uclk;	
+		count <= 0;
+		uclk <= ~uclk;	
 		end
 	end
 end
@@ -53,54 +53,54 @@ always @(posedge uclk)
 begin 
 	if(rst)
 	begin
-		state &lt;= idle;
-		tx &lt;= 1&apos;b1;
-		donetx &lt;= 1&apos;b0;
-		counts &lt;= 0;
+		state <= idle;
+		tx <= 1'b1;
+		donetx <= 1'b0;
+		counts <= 0;
 
 	end
 	else begin
 	case (state)
 		idle:
 		 begin
-			counts &lt;= 0;
-			tx &lt;= 1&apos;b1;
-			donetx &lt;= 1&apos;b0;
+			counts <= 0;
+			tx <= 1'b1;
+			donetx <= 1'b0;
 			
 			if(newd)
 			begin
-				state &lt;= start;
-				din &lt;= tx_data;
+				state <= start;
+				din <= tx_data;
 			end
 
 		end
 
 		start: begin
-			tx &lt;= 1&apos;b0;  ///Start bit
-			state &lt;= transfer;
+			tx <= 1'b0;  ///Start bit
+			state <= transfer;
 		end
 
 
 		transfer:
 		 begin
-			if (counts &lt;= 7) begin
-				counts &lt;= counts + 1;
-				tx &lt;= din[counts];
+			if (counts <= 7) begin
+				counts <= counts + 1;
+				tx <= din[counts];
 			end
 
 			else begin
-				state &lt;= done;
+				state <= done;
 			end
 		end
 		done:begin
 
 			
-				tx &lt;= 1&apos;b1; //stop bit
-				state &lt;= idle;
-				donetx &lt;= 1&apos;b1;
+				tx <= 1'b1; //stop bit
+				state <= idle;
+				donetx <= 1'b1;
 		end
 		
-		default: state &lt;= idle;
+		default: state <= idle;
 		endcase
 	end
 
@@ -134,7 +134,7 @@ integer counts = 0;
 
 reg uclk = 0;
 
-typedef enum bit[1:0] {idle = 2&apos;b00, start = 2&apos;b01 } state_t;
+typedef enum bit[1:0] {idle = 2'b00, start = 2'b01 } state_t;
 
 state_t state;
 
@@ -143,16 +143,16 @@ state_t state;
 always @(posedge clk)
 	begin
 		if(rst) begin
-		count &lt;= 0;
-		uclk &lt;= 0;
+		count <= 0;
+		uclk <= 0;
 		end
 		else begin
 
-		if(count &lt; clkcount/2)
-		 count &lt;= count + 1;
+		if(count < clkcount/2)
+		 count <= count + 1;
 		else begin
-		 count &lt;= 0;
-		 uclk &lt;= ~uclk;
+		 count <= 0;
+		 uclk <= ~uclk;
 		end
 	end
 end
@@ -162,42 +162,42 @@ end
 always @(posedge uclk)
 	begin 
 		if (rst) begin
-		rxdata &lt;= 8&apos;h00;
-		counts &lt;= 0;
-		done &lt;= 1&apos;b0;
+		rxdata <= 8'h00;
+		counts <= 0;
+		done <= 1'b0;
 		end
 		else
 		begin
 		 case(state)
 
 		idle : begin
-			rxdata &lt;= 8&apos;h00;
-			counts &lt;= 0;
-			done &lt;= 1&apos;b0;
+			rxdata <= 8'h00;
+			counts <= 0;
+			done <= 1'b0;
 		
-		if (rx == 1&apos;b0)
-		state &lt;= start;
+		if (rx == 1'b0)
+		state <= start;
 		else
-		state &lt;= idle;
+		state <= idle;
 		end
 
 
 		start:
 		begin
 
-			if (counts &lt;= 7)
+			if (counts <= 7)
 			begin
-			counts &lt;= counts + 1;
-			rxdata &lt;= {rx, rxdata[7:1]};
+			counts <= counts + 1;
+			rxdata <= {rx, rxdata[7:1]};
 			end
 		else begin
-			counts &lt;= 0;
-			done &lt;= 1&apos;b1;
-			state &lt;= idle;
+			counts <= 0;
+			done <= 1'b1;
+			state <= idle;
 		end
 		end
 
-		default: state &lt;= idle;
+		default: state <= idle;
 	endcase
 
 	end
@@ -233,4 +233,3 @@ uartrx #(clk_freq, baud_rate) rtx (clk, rst, rx, donerx, doutrx);
 endmodule
 
 
-</pre>
